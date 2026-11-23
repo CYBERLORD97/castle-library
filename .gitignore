@@ -1,0 +1,10 @@
+# Caches and local tooling (never commit)
+.cache/
+.local/
+.npm/
+__pycache__/
+*.pyc
+.venv/
+.sudo_as_admin_successful
+# Scratch / test output
+/tmp/

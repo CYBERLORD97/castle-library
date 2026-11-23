@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Castle Library — Scriptorium &amp; Rare Vaults</title>
+<meta name="description" content="A free library of classics and open editions. Turn the pages on a 3D castle lectern or download an EPUB for offline reading.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='72' font-size='70' text-anchor='middle' fill='%23d4af37'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css?v=responsive-1">
+</head>
+<body class="night-mode">
+
+<!-- ================= TOP NAVIGATION / ARCHIVIST BAR ================= -->
+<header class="archivist-nav" id="topNav">
+  <div class="nav-brand">
+    <span class="crest-icon" aria-hidden="true">⚜</span>
+    <div class="brand-text">
+      <span class="brand-title">THE SCRIPTORIUM</span>
+      <span class="brand-sub">CASTLE OF DUKE HUMFREY · OXONIA</span>
+    </div>
+  </div>
+
+  <div class="nav-controls">
+    <!-- Chamber Switcher -->
+    <div class="chamber-select-wrap" title="Switch Historic Chamber">
+      <span class="control-label">CHAMBER:</span>
+      <select id="chamberSelect" class="brass-select" aria-label="Select castle chamber">
+        <option value="bodleian">Duke Humfrey’s Sanctum (1488)</option>
+        <option value="trinity">The Long Room (Dublin, 1712)</option>
+        <option value="strahov">Baroque Vault (Strahov, 1779)</option>
+      </select>
+    </div>
+
+    <!-- Atmosphere & Lighting -->
+    <button class="brass-btn" id="candleToggle" title="Toggle Midnight Candlelight / Daylight Sunbeams">
+      <span class="btn-icon">🕯️</span>
+      <span class="btn-txt" id="candleLabel">CANDLELIGHT</span>
+    </button>
+
+    <!-- Background instrumental music -->
+    <button class="brass-btn" id="musicToggle" aria-pressed="true" title="Turn background music off">
+      <span class="btn-icon" aria-hidden="true">🎵</span>
+      <span class="btn-txt">MUSIC ON</span>
+    </button>
+
+    <!-- Castle Soundscape (Web Audio) -->
+    <button class="brass-btn" id="soundToggle" title="Toggle Castle Fireplace &amp; Leaded-Glass Rain Soundscape">
+      <span class="btn-icon" id="soundIcon">🔇</span>
+      <span class="btn-txt" id="soundLabel">SOUNDSCAPE</span>
+    </button>
+
+    <!-- Ex Libris Drawer Button -->
+    <button class="brass-btn highlight" id="studyBtn" aria-label="Open your study shelf" title="Open Your Private Study Shelf">
+      <span class="btn-icon">📜</span>
+      <span class="btn-txt">STUDY SHELF</span>
+      <span class="study-count-badge" id="studyBadge">0</span>
+    </button>
+  </div>
+</header>
+
+<main id="mainContent">
+
+  <!-- ================= HERO SECTION ================= -->
+  <section class="castle-hero" id="hero">
+    <!-- Hero library photographs -->
+    <div class="castle-backdrop" id="castleBackdrop" aria-hidden="true">
+      <div class="chamber-bg chamber-bodleian active" style="background-image:url('castle-hero.jpg');"></div>
+      <div class="chamber-bg chamber-trinity" style="background-image:url('trinity-room.jpg');"></div>
+      <div class="chamber-bg chamber-strahov" style="background-image:url('strahov-room.jpg');"></div>
+      <div class="backdrop-vignette"></div>
+      <div class="candlelight-overlay" id="candleGlow"></div>
+      <canvas class="dust-canvas" id="dustCanvas"></canvas>
+    </div>
+    <div class="hero-content">
+      <h1 class="hero-title">
+        The Castle Library
+        <span class="hero-subtitle">Where durable thoughts are bound in morocco leather &amp; kept for centuries.</span>
+      </h1>
+
+      <p class="hero-description">
+        A free library for curious readers. Take a book down from the oak shelves and turn its pages on the candlelit lectern. No payment or account needed.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#grandShelfSection" class="ornate-button primary" id="ctaExploreShelf">
+          <span class="btn-ornament">❧</span>
+          <span>BROWSE THE GRAND SHELF</span>
+          <span class="btn-ornament">❧</span>
+        </a>
+        <a href="#vaultCatalogSection" class="ornate-button secondary" id="ctaExploreVault">
+          <span class="btn-ornament">✦</span>
+          <span>SEARCH THE RARE VAULT</span>
+          <span class="btn-ornament">✦</span>
+        </a>
+      </div>
+
+      <!-- Live Interactive Reading Candle -->
+      <button class="hero-candle" type="button" id="heroCandle" aria-label="Candlelight" aria-pressed="true">
+        <span class="candle-glow-aura" aria-hidden="true"></span>
+        <span class="candle-stick" aria-hidden="true">
+          <span class="candle-wick"></span>
+          <span class="candle-flame"></span>
+        </span>
+        <span class="candle-dish" aria-hidden="true"></span>
+        <span class="candle-caption" id="candleCaption">Flame lit · Snuff candle</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= THE PHYSICAL BOOKSHELF SECTION ================= -->
+  <section class="shelf-sanctuary" id="grandShelfSection">
+    <div class="shelf-header-plaque">
+      <div class="plaque-frame">
+        <span class="plaque-fleuron-left">❦</span>
+        <div class="plaque-titles">
+          <span class="plaque-kicker">CURATOR’S SPECIAL ACCESSION</span>
+          <h2 class="plaque-heading">The Grand Shelf of Masterworks</h2>
+          <span class="plaque-sub">Resting on aged dark oak. Slide to browse · Hover to pull · Click to open on the lectern</span>
+        </div>
+        <span class="plaque-fleuron-right">❦</span>
+      </div>
+
+      <!-- Shelf View Mode Toggle -->
+      <div class="shelf-mode-selector">
+        <button class="mode-btn active" id="modeFace" data-mode="face">
+          <span>Three-Quarter Bindings</span>
+        </button>
+        <button class="mode-btn" id="modeSpine" data-mode="spine">
+          <span>Classic Spine Stack</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- The Wooden Bookshelf Structure -->
+    <div class="bookshelf-alcove" id="shelfAlcove">
+      <!-- Shelf Scroll Chevrons -->
+      <button class="shelf-nav-btn prev" id="shelfScrollLeft" aria-label="Scroll shelf left">‹</button>
+      <button class="shelf-nav-btn next" id="shelfScrollRight" aria-label="Scroll shelf right">›</button>
+
+      <!-- The Shelf Track with Books -->
+      <div class="bookshelf-viewport" id="shelfViewport">
+        <div class="bookshelf-rail" id="shelfRail">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- Physical Carved Oak Shelf Beam with brass edge plate -->
+      <div class="wood-shelf-beam">
+        <div class="beam-brass-trim"></div>
+        <div class="beam-face">
+          <span class="beam-inscription">✦ BIBLIOTHECA HUMFREDI BODLEIANA · MDCCCCXXVI · ACCESSIONES PERPETUAE ✦</span>
+        </div>
+        <div class="beam-shadow"></div>
+      </div>
+    </div>
+
+    <div class="shelf-footer-hint">
+      <span>Tip: Click any volume to bring it to the candlelit reading desk</span>
+    </div>
+  </section>
+
+  <!-- ================= THE COMPLETE VAULT CATALOG ================= -->
+  <section class="vault-catalog-section" id="vaultCatalogSection">
+    <div class="vault-header">
+      <div class="vault-insignia">
+        <span class="fleuron">⚜</span>
+        <span class="insignia-text">THE COMPLETE VAULT ARCHIVE</span>
+        <span class="fleuron">⚜</span>
+      </div>
+      <h2 class="vault-title">The Open Catalog</h2>
+      <p class="vault-sub">Discover books from the Castle shelves. Open an available edition on the lectern or download it as an EPUB.</p>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="vault-filter-bar">
+      <div class="filter-ribbons" id="filterRibbons" role="group" aria-label="Filter by subject">
+        <button class="filter-tag active" data-cat="all">All Volumes</button>
+        <button class="filter-tag" data-cat="fiction">Fiction</button>
+        <button class="filter-tag" data-cat="philosophy">Philosophy</button>
+        <button class="filter-tag" data-cat="investing">Economics</button>
+        <button class="filter-tag" data-cat="engineering">Science &amp; Craft</button>
+        <button class="filter-tag" data-cat="history">History</button>
+        <button class="filter-tag" data-cat="essays">Essays</button>
+        <button class="filter-tag" data-cat="poetry">Poetry</button>
+        <button class="filter-tag" data-cat="drama">Drama</button>
+      </div>
+
+      <div class="ledger-search-box">
+        <span class="search-quill">✒</span>
+        <input type="text" id="vaultSearchInput" placeholder="Search title, author, subject, or catalog number…" aria-label="Search the catalog">
+        <button class="clear-search" id="clearSearch" aria-label="Clear search" hidden>×</button>
+      </div>
+    </div>
+
+    <div class="catalog-status-bar">
+      <label for="accessFilter">Show <select id="accessFilter"><option value="all">All titles</option><option value="read">Read on lectern</option><option value="epub">EPUB download</option><option value="record">Catalog records only</option></select></label>
+      <label for="genreFilter">Genre <select id="genreFilter"><option value="">Any genre</option><option value="adventure">Adventure</option><option value="children">Children &amp; Family</option><option value="gothic">Gothic &amp; Horror</option><option value="memoir">Memoir</option><option value="mystery">Mystery</option><option value="romance">Romance</option><option value="scifi">Science Fiction</option></select></label>
+      <label>Language <select id="pgLanguage"><option value="">All languages</option><option value="en">English</option></select></label>
+      <label>Format <select id="pgKind"><option value="">All formats</option><option value="Text">Text</option></select></label>
+      <span id="catalogCount" aria-live="polite"></span>
+    </div>
+    <!-- Grid of Collector Accession Cards -->
+    <div class="vault-grid" id="vaultGrid">
+      <!-- Populated via JS -->
+    </div>
+    <nav class="catalog-pagination" id="catalogPagination" aria-label="Catalog pages" hidden>
+      <button type="button" id="catalogPrev">‹ Previous</button><span id="catalogPage"></span><form class="folio-jump" id="catalogJumpForm"><label for="catalogJumpPage">Page</label><input id="catalogJumpPage" type="number" min="1" required><button type="submit">Go</button></form><button type="button" id="catalogNext">Next ›</button>
+    </nav>
+  </section>
+
+  <!-- ================= ABOUT THE SCRIPTORIUM ================= -->
+  <section class="castle-about-section" id="aboutSection">
+    <div class="about-parchment-scroll">
+      <div class="scroll-seal">
+        <span>⚜</span>
+      </div>
+      <h3 class="scroll-heading">A Library Open to Everyone</h3>
+      <div class="scroll-columns">
+        <div class="scroll-col">
+          <p class="illuminated-intro">
+            <span class="drop-letter">I</span>n the Castle Library, nobody needs to pay to turn a page. Every hosted book is free to read in the browser or download as an EPUB.
+          </p>
+          <p>
+            The shelves include public-domain editions and works shared with permission.
+          </p>
+        </div>
+        <div class="scroll-col">
+          <div class="about-hallmarks">
+            <div class="hallmark">
+              <span class="hm-num" id="catalogTotal">—</span>
+              <span class="hm-lbl">Catalog Records</span>
+            </div>
+            <div class="hallmark">
+              <span class="hm-num" id="fullTotal">—</span>
+              <span class="hm-lbl">Lectern Editions</span>
+            </div>
+            <div class="hallmark">
+              <span class="hm-num">0</span>
+              <span class="hm-lbl">Accounts Required</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= GRAND READING LECTERN (3D BOOK MODAL) ================= -->
+<div class="lectern-modal" id="lecternModal" hidden role="dialog" aria-modal="true" aria-label="Castle Reading Lectern">
+  <div class="lectern-overlay" aria-hidden="true"></div>
+
+  <!-- Sconces & Ambient Reading Room -->
+  <div class="lectern-sconce left">
+    <div class="sconce-aura"></div>
+    <div class="sconce-candle"><div class="sconce-flame"></div></div>
+  </div>
+  <div class="lectern-sconce right">
+    <div class="sconce-aura"></div>
+    <div class="sconce-candle"><div class="sconce-flame"></div></div>
+  </div>
+
+  <!-- Lectern Top Bar -->
+  <header class="lectern-topbar">
+    <div class="lectern-meta">
+      <span class="lectern-signet">❦</span>
+      <span class="lectern-title-display" id="lecternTitleDisplay"></span>
+      <span class="lectern-author-display" id="lecternAuthorDisplay"></span>
+    </div>
+
+    <div class="lectern-tools">
+      <button class="brass-tool-btn lectern-candle" id="lecternCandle" type="button" aria-label="Reading candlelight" aria-pressed="true" title="Snuff the reading candles">
+        <span class="tool-icon" aria-hidden="true">✦</span>
+        <span class="tool-label" id="lecternCandleLabel">FLAME ON</span>
+      </button>
+      <a class="brass-tool-btn lectern-download" id="lecternDownload" title="Download EPUB" aria-label="Download this book as EPUB" download hidden>
+        <span class="tool-icon" aria-hidden="true">↓</span>
+        <span class="tool-label">EPUB</span>
+      </a>
+      <button class="brass-tool-btn" id="savePlaceBtn" title="Save this reading position" aria-label="Save reading position">
+        <span class="tool-icon" aria-hidden="true">◇</span>
+        <span class="tool-label">SAVE PLACE</span>
+      </button>
+
+      <!-- Reading Sound Toggle -->
+      <button class="brass-tool-btn" id="lecternSoundBtn" aria-label="Toggle reading sounds" title="Toggle Page Rustle &amp; Leather Creak">
+        <span class="tool-icon">🔊</span>
+        <span class="tool-label">SOUND</span>
+      </button>
+
+      <!-- Add to Study Shelf -->
+      <button class="brass-tool-btn" id="lecternStudyBtn" aria-label="Save or remove this book from the study shelf" title="Inscribe into Your Private Study">
+        <span class="tool-icon">📜</span>
+        <span class="tool-label" id="lecternStudyLabel">ADD TO STUDY</span>
+      </button>
+
+      <!-- Close Lectern -->
+      <button class="brass-tool-btn close-btn" id="lecternCloseBtn" aria-label="Return to the shelf" title="Return Book to Castle Shelf (Esc)">
+        <span class="tool-icon">✕</span>
+        <span class="tool-label">RETURN TO SHELF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Lectern Central Stage -->
+  <div class="lectern-stage" id="lecternStage">
+    <div class="reader-message" id="readerMessage" role="status" aria-live="polite" hidden></div>
+
+    <!-- 3D Book Object Container -->
+    <div class="lectern-frame">
+      <div class="book-perspective-rig" id="bookPerspectiveRig">
+        <div class="book-3d" id="book3d">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
+      <button type="button" class="page-click-zone prev-zone" id="zonePrev" aria-label="Turn the left page back" title="Turn the left page back">
+        <span class="zone-chevron" aria-hidden="true">‹</span>
+      </button>
+      <button type="button" class="page-click-zone next-zone" id="zoneNext" aria-label="Turn the right page forward" title="Turn the right page forward">
+        <span class="zone-chevron" aria-hidden="true">›</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Lectern Bottom Controls -->
+  <footer class="lectern-bottombar">
+    <button class="brass-nav-btn" id="btnPagePrev">
+      <span>‹ PREVIOUS LEAF</span>
+    </button>
+
+    <div class="spread-indicator">
+      <span class="spread-label" id="spreadLabel" aria-live="polite">FRONT COVER</span>
+      <form class="folio-jump" id="folioForm" hidden>
+        <label for="folioInput">Page</label> <input type="number" id="folioInput" min="1" step="1" required> <button type="submit">Go</button>
+      </form>
+    </div>
+
+    <button class="brass-nav-btn" id="btnPageNext">
+      <span>NEXT LEAF ›</span>
+    </button>
+  </footer>
+</div>
+
+<!-- ================= PRIVATE STUDY DRAWER (EX LIBRIS) ================= -->
+<div class="study-scrim" id="studyScrim" hidden></div>
+<aside class="study-drawer" id="studyDrawer" hidden role="dialog" aria-label="Your Private Study Archive">
+  <div class="drawer-header">
+    <div class="drawer-crest">
+      <span>⚜ EX LIBRIS ⚜</span>
+    </div>
+    <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close Study Drawer">✕</button>
+  </div>
+
+  <div class="drawer-exlibris-plate">
+    <div class="bookplate-frame">
+      <div class="bookplate-banner">EX LIBRIS BIBLIOTHECAE</div>
+      <div class="bookplate-name" id="bookplateOwner">Scholasticus</div>
+      <button class="edit-bookplate-btn" id="editOwnerBtn" title="Inscribe your personal name">✎ Inscribe Name</button>
+      <div class="bookplate-motto">“Non multa, sed multum.”</div>
+    </div>
+  </div>
+
+  <div class="drawer-body">
+    <div class="drawer-section-title">VOLUMES TAKEN TO YOUR DESK:</div>
+    <div class="drawer-book-list" id="drawerBookList">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+
+  <div class="drawer-footer">
+    <span class="drawer-count-info" id="drawerCountInfo">0 Volumes Preserved</span>
+  </div>
+</aside>
+
+<!-- ================= ARCHIVIST COLOPHON FOOTER ================= -->
+<footer class="scriptorium-footer">
+  <div class="footer-inner">
+    <div class="footer-crest">
+      <span>⚜</span>
+    </div>
+    <h2 class="footer-title">Good books should be within everyone’s reach.</h2>
+    <p class="footer-colophon">Castle Library is a free place to discover books, read online, and download EPUBs to take with you.</p>
+    <p class="footer-binding-note">No subscriptions. No account needed.</p>
+    <div class="footer-hallmark-line">
+      <a href="#vaultCatalogSection">Explore the collection <span aria-hidden="true">↑</span></a>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast Notification Banner -->
+<div class="castle-toast" id="castleToast" hidden>
+  <span class="toast-seal">⚜</span>
+  <span class="toast-text" id="toastText"></span>
+</div>
+
+<script src="editions.js?v=pages-2" defer></script>
+<script src="catalog.js" defer></script>
+<script src="app.js?v=responsive-1" defer></script>
+</body>
+</html>
