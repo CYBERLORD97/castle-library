@@ -368,7 +368,7 @@ class CastleHandler(SimpleHTTPRequestHandler):
         path=urlsplit(self.path).path
         public_files={'/','/index.html','/app.js','/catalog.js','/editions.js','/styles.css','/aged-parchment.jpg',
                       '/castle-hero.jpg','/dark-shelf.jpg','/marbled-endpaper.jpg','/strahov-room.jpg','/trinity-room.jpg','/wood-shelf.jpg'}
-        if path in public_files or re.fullmatch(r'/(covers/[a-z0-9-]+\.jpg|downloads/[a-z0-9-]+\.epub|pages/[a-z0-9-]+/\d+\.json|audio/[a-z0-9-]+\.mp3)',path):
+        if path in public_files or re.fullmatch(r'/(covers/[a-z0-9-]+\.jpg|downloads/[a-z0-9-]+\.epub|pages/[a-z0-9-]+/\d+\.json|audio/[a-z0-9-]+\.mp3|brand/[a-z0-9-]+\.png)',path):
             return super().send_head()
         self.send_error(404)
         return None

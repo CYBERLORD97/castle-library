@@ -2718,3 +2718,19 @@ body.candle-out .scriptorium-footer::before { filter: brightness(.53) saturate(.
   #vaultSearchInput { font-size: 15px; }
   .lectern-tools { flex-wrap: wrap; justify-content: center; }
 }
+
+
+/* Castle Library emblem in header */
+.crest-img {
+  width: 46px;
+  height: 46px;
+  background: radial-gradient(circle, rgba(212,175,55,0.18), transparent 70%);
+  object-fit: contain;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 0 8px var(--gold-glow));
+  transition: transform 0.6s var(--ease-book);
+}
+.nav-brand:hover .crest-img {
+  transform: rotate(45deg) scale(1.08);
+}
